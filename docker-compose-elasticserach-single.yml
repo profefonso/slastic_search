@@ -1,0 +1,43 @@
+version: "2.2"
+services:
+  elasticsearch-single-1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+    container_name: elasticsearch-single-1
+    environment:
+      - "cluster.name=elasticsearch-local-cluster"
+      - "node.name=elasticsearch1"
+      - "network.host=0.0.0.0"
+      - "xpack.security.enabled=false"
+      - "xpack.monitoring.enabled=false"
+      - "xpack.watcher.enabled=false"
+      - "xpack.ml.enabled=false"
+      - "bootstrap.memory_lock=true"
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - "discovery.type=single-node"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /home/alfonso/Developer/Projects/elastic_search/data/elasticsearch/node/0:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  cerebro:
+    image: lmenezes/cerebro:0.8.1
+    container_name: cerebro-monitor
+    ports:
+      - "9000:9000"
+    external_links:
+      - elasticsearch-single-1:elasticsearch1
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.3.0
+    container_name: kibana-graph
+    ports:
+      - "5601:5601"
+    external_links:
+      - elasticsearch-single-1:elasticsearch1
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch1:9200

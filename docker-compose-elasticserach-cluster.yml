@@ -1,0 +1,90 @@
+version: '2.2'
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+    container_name: es01
+    environment:
+      - node.name=es01
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /home/alfonso/Developer/Projects/elastic_search/data/elasticsearch/node/1:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - esnet
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+    container_name: es02
+    environment:
+      - node.name=es02
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /home/alfonso/Developer/Projects/elastic_search/data/elasticsearch/node/2:/usr/share/elasticsearch/data
+    ports:
+      - 9201:9200
+    networks:
+      - esnet
+
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+    container_name: es03
+    environment:
+      - node.name=es03
+      - discovery.seed_hosts=es02,es01
+      - cluster.initial_master_nodes=es01,es02
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /home/alfonso/Developer/Projects/elastic_search/data/elasticsearch/node/3:/usr/share/elasticsearch/data
+    ports:
+      - 9202:9200
+    networks:
+      - esnet
+
+  cerebro:
+    image: lmenezes/cerebro:0.8.1
+    container_name: cerebro-monitor
+    ports:
+      - "9000:9000"
+    external_links:
+      - es01:elasticsearch1
+      - es02:elasticsearch2
+      - es03:elasticsearch3
+    networks:
+      - esnet
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.3.0
+    container_name: kibana-graph
+    ports:
+      - "5601:5601"
+    external_links:
+      - es01:elasticsearch1
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch1:9200
+    networks:
+      - esnet
+
+networks:
+  esnet:
