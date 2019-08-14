@@ -15,7 +15,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - /home/alfonso/Developer/Projects/elastic_search/data/elasticsearch/node/1:/usr/share/elasticsearch/data
+      - data/node/1:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
     networks:
@@ -35,7 +35,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - /home/alfonso/Developer/Projects/elastic_search/data/elasticsearch/node/2:/usr/share/elasticsearch/data
+      - data/node/2:/usr/share/elasticsearch/data
     ports:
       - 9201:9200
     networks:
@@ -56,7 +56,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - /home/alfonso/Developer/Projects/elastic_search/data/elasticsearch/node/3:/usr/share/elasticsearch/data
+      - data/node/3:/usr/share/elasticsearch/data
     ports:
       - 9202:9200
     networks:
