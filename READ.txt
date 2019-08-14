@@ -1,3 +1,7 @@
 READ
 
-sudo sysctl -w vm.max_map_count=262144
+Mem:
+	sudo sysctl -w vm.max_map_count=262144
+
+Test:
+	curl -d '{"key1":"value1", "key2":"value2", "key3":"value3"}' -H "Content-Type: application/json" -X POST http://localhost:9200/test/test
